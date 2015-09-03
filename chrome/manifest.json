@@ -2,13 +2,13 @@
   "manifest_version": 2,
   "name": "Thumbsup helper for Qzone",
   "description": "This extension mimics clicking thumbsup icon action, relieve you of complaints of friends for not timely thumbsup their posts. ",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "default_locale": "en",
   "homepage_url": "https://github.com/JerryChin/thumbsup",
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "images/ThumbFinal_4.9.15.png",
+    "48": "images/ThumbFinal_4.9.15.png",
+    "128": "images/ThumbFinal_4.9.15.png"
   },
   "content_scripts": [
     {

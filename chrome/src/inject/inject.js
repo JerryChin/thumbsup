@@ -1,6 +1,28 @@
-var CAPTION = "Thumbsup ";
+/* NOTICE
+ * 
+ * The word thumbsup used in the context of this extension has three meanings
+ * 1, vi.		give someone or something done a thumbs-up.
+ * 2, n.		Good Job!
+ * 3, Proper N. The clickable html element 赞(pinyin: zan)
+ */
 
+var DEBUG = false;
+
+if(DEBUG) {
+	/* turn off console report */
+	console.log = function() {};
+}
+var CAPTION = "Thumbsup ";
+var MIN_POST_CONTENT_HEIGHT = 500;
+
+/* class name for thumbsup element adopted by Tecent team */
+var THUMBSUP_CLASSNAME = "item qz_like_btn_v3";
+
+/* offsetHeight see: 
+ * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight
+ */
 var offset_height = document.body.offsetHeight;
+
 var thumbsup_counter = 0;
 window.addEventListener("load", function() {
 	
@@ -8,12 +30,18 @@ window.addEventListener("load", function() {
 	
 	var feed_friend_list = document.getElementById("feed_friend_list");
 	
+	/* no scroll event will be dispatched after the page loaded,
+	 * so we must call thumbsup() directly.
+	 */
 	thumbsup();
 	
-	console.log(CAPTION + ": event binding, invoked on <b>scroll to end</b>");
+	console.log(CAPTION + ": event binding, invoked on scroll to end");
 	
+	/* thumbsup() will invoked on scroll to end event,
+	 * as more fresh posts show up. 
+	 */
 	window.addEventListener("scroll",function(e) {
-		if( document.body.offsetHeight - offset_height > 500) {
+		if((document.body.offsetHeight - offset_height) > MIN_POST_CONTENT_HEIGHT) {
 			console.log("Update!");
 			offset_height = document.body.offsetHeight;
 			thumbsup();
@@ -24,13 +52,15 @@ window.addEventListener("load", function() {
 });
 
 function thumbsup() {
-	var thumbsup_collection = feed_friend_list.getElementsByClassName("item qz_like_btn_v3");
+	
+	var thumbsup_collection = feed_friend_list.getElementsByClassName(THUMBSUP_CLASSNAME);
 	
 	for (var i = 0; i < thumbsup_collection.length; i++) { 
-		/* every clicked thumbsup element has an attribute "data-clicklog"
-		 * indicating its status, viz: being liked or disliked
-		 */ 
 		
+		/* every clicked thumbsup element has an attribute "data-clicklog"
+		 * indicating its status, viz: being liked or disliked, upon which we
+		 * depend to decide whether to fire or not.
+		 */ 
 		if (thumbsup_collection[i].getAttribute("data-clicklog") != "cancellike") {
 			eventFire(thumbsup_collection[i], "click");
 			thumbsup_counter++;
@@ -40,6 +70,9 @@ function thumbsup() {
 	console.log(CAPTION + ": effective thumbsup(totally) : " + thumbsup_counter);
 }
 
+/* Author: kooiinc
+ * Profile: http://stackoverflow.com/users/58186/kooiinc
+ */
 function eventFire(el, etype){
 	  if (el.fireEvent) {
 	    el.fireEvent('on' + etype);
@@ -48,26 +81,4 @@ function eventFire(el, etype){
 	    evObj.initEvent(etype, true, false);
 	    el.dispatchEvent(evObj);
 	  }
-}
-
-function findClass(element, className) {
-    var foundElement = null, found;
-    function recurse(element, className, found) {
-        for (var i = 0; i < element.childNodes.length && !found; i++) {
-            var el = element.childNodes[i];
-            var classes = el.className != undefined? el.className.split(" ") : [];
-            for (var j = 0, jl = classes.length; j < jl; j++) {
-                if (classes[j] == className) {
-                    found = true;
-                    foundElement = element.childNodes[i];
-                    break;
-                }
-            }
-            if(found)
-                break;
-            recurse(element.childNodes[i], className, found);
-        }
-    }
-    recurse(element, className, false);
-    return foundElement;
 }
